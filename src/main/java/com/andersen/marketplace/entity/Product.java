@@ -20,6 +20,19 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    public Product(String name, String logo, Category category) {
+        this.name = name;
+        this.logo = logo;
+        this.category = category;
+    }
+
+    public Product(String name, String logo) {
+        this.name = name;
+        this.logo = logo;
+    }
+
+    public Product() {
+    }
 
     public Long getId() {
         return id;

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: marketplace
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+
+server:
+  port: 8081
+
+s3:
+  region: eu-north-1
+  accessKey: AKIA4VDBMGFNGIKJ4APW
+  secretKey: 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
+  bucketName: andersen-marketplace

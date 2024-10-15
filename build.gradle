@@ -24,6 +24,10 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.772'
+
 }
 
 tasks.named('test') {

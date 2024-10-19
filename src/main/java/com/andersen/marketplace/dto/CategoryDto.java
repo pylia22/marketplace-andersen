@@ -1,17 +1,16 @@
 package com.andersen.marketplace.dto;
 
-import java.util.List;
-
 public class CategoryDto {
 
     private String name;
     private String logo;
-    private List<ProductDto> products;
 
-    public CategoryDto(String name, String logo, List<ProductDto> products) {
+    public CategoryDto(String name, String logo) {
         this.name = name;
         this.logo = logo;
-        this.products = products;
+    }
+
+    public CategoryDto() {
     }
 
     public String getName() {
@@ -28,13 +27,5 @@ public class CategoryDto {
 
     public void setLogo(String logo) {
         this.logo = logo;
-    }
-
-    public List<ProductDto> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<ProductDto> products) {
-        this.products = products;
     }
 }

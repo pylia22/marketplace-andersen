@@ -9,15 +9,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("select distinct p.name from Product p")
     Set<String> findUniqueProducts();
 
-    @Query("SELECT p FROM Product p WHERE " +
-            "(:category IS NULL OR LOWER(p.category.name) = LOWER(:category)) AND " +
-            "(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))")
-    Page<Product> findAllWithFilter(@Param("category") String category, @Param("name") String name, Pageable pageable);
+    @Query("""
+            SELECT p
+            FROM Product p
+            WHERE (:category IS NULL OR p.category.name ILIKE %:category%)
+            AND (:name IS NULL OR p.name ILIKE %:name%)
+            """)
+    Page<Product> findAllWithFilter(@Param("category") String category, @Param("name") String name, Pageable pageable
+    );
 }

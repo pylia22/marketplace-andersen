@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class GenericCacheImpl<K, V> implements GenericCache<K, V> {
 
-    public static final Long DEFAULT_CACHE_TIMEOUT = 120000L;
+    public static final Long DEFAULT_CACHE_TIMEOUT = 90000L;
     protected Map<K, CacheValue<V>> cacheMap;
     protected Long cacheTimeout;
 

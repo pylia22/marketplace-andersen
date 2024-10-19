@@ -1,5 +1,7 @@
 package com.andersen.marketplace.dto;
 
+import java.util.Objects;
+
 public class ProductDto {
 
     private String name;
@@ -34,5 +36,18 @@ public class ProductDto {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductDto that = (ProductDto) o;
+        return Objects.equals(name, that.name) && Objects.equals(logo, that.logo) && Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, logo, category);
     }
 }

@@ -6,6 +6,9 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  flyway:
+    enabled: true
+    validate-on-migrate: true
 
 server:
   port: 8081

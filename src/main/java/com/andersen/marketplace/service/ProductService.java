@@ -5,7 +5,7 @@ import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.dto.ProductSearchRequest;
 import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
-import com.andersen.marketplace.exception.CategoryBadRequestException;
+import com.andersen.marketplace.exception.CategoryNotFoundException;
 import com.andersen.marketplace.exception.ProductNotFoundException;
 import com.andersen.marketplace.mapper.ProductMapper;
 import com.andersen.marketplace.repository.CategoryRepository;
@@ -13,6 +13,7 @@ import com.andersen.marketplace.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class ProductService {
     @Autowired
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
                           ProductMapper productMapper, PictureService pictureService,
-                          GenericCache<UUID, Product> cache) {
+                          @Qualifier("productCache") GenericCache<UUID, Product> cache) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productMapper = productMapper;
@@ -61,11 +62,7 @@ public class ProductService {
     }
 
     public ProductDto editProduct(UUID id, ProductDto updatedProduct, MultipartFile logo) {
-        Product product = this.cache.get(id).orElseGet(() -> {
-            logger.info("Fetching product with id {} from repository", id);
-            return productRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException(id));
-        });
+        Product product = getProduct(id);
         updateProductLogo(updatedProduct, logo, product.getLogo());
         productMapper.updateProductFromDto(product, updatedProduct);
 
@@ -98,13 +95,13 @@ public class ProductService {
     private Category getCategoryByName(String categoryName) {
         Category category = categoryRepository.findByName(categoryName);
         if (category == null) {
-            throw new CategoryBadRequestException("Category " + categoryName + " not found");
+            throw new CategoryNotFoundException(categoryName);
         }
         return category;
     }
 
     public String deleteProduct(UUID id) {
-        Product product = this.cache.get(id).orElseGet(() -> this.getProductFromRepository(id));
+        Product product = getProduct(id);
 
         pictureService.deleteFileFromS3(product.getLogo());
         productRepository.delete(product);
@@ -113,17 +110,19 @@ public class ProductService {
         return "product has been deleted";
     }
 
-    public ProductDto getProduct(UUID id) {
-        Product product = this.cache.get(id).orElseGet(() -> this.getProductFromRepository(id));
+    public ProductDto getProductDto(UUID id) {
+        Product product = getProduct(id);
+        this.cache.put(id, product);
 
         return productMapper.mapToProductDto(product);
     }
 
-    public Product getProductFromRepository(UUID id) {
-        logger.info("Fetching product with id {} from repository", id);
-        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
-        this.cache.put(id, product);
+    private Product getProduct(UUID id) {
+        return cache.get(id).orElseGet(() -> getProductFromRepository(id));
+    }
 
-        return product;
+    private Product getProductFromRepository(UUID id) {
+        logger.info("Fetching product with id {} from repository", id);
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 }

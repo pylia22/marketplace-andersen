@@ -6,7 +6,7 @@ import com.andersen.marketplace.dto.CategoryProductsDto;
 import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
-import com.andersen.marketplace.exception.CategoryBadRequestException;
+import com.andersen.marketplace.exception.CategoryNotFoundException;
 import com.andersen.marketplace.mapper.CategoryMapperImpl;
 import com.andersen.marketplace.mapper.ProductMapperImpl;
 import com.andersen.marketplace.repository.CategoryRepository;
@@ -104,7 +104,7 @@ class CategoryServiceTest {
 
         when(categoryRepository.findByName(TEST_CATEGORY_NAME)).thenReturn(new Category());
 
-        assertThrows(CategoryBadRequestException.class, () -> categoryService.addCategory(categoryDto, file));
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.addCategory(categoryDto, file));
     }
 
     @Test
@@ -142,7 +142,7 @@ class CategoryServiceTest {
     void shouldThrowWhenCategoryNotFoundById() {
         when(categoryRepository.findByIdWithProducts(TEST_CATEGORY_ID)).thenReturn(Optional.empty());
 
-        assertThrows(CategoryBadRequestException.class, () -> categoryService.getCategory(TEST_CATEGORY_ID));
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(TEST_CATEGORY_ID));
     }
 
     private Category getCategory() {

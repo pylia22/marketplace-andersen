@@ -5,7 +5,7 @@ import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.dto.ProductSearchRequest;
 import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
-import com.andersen.marketplace.exception.CategoryBadRequestException;
+import com.andersen.marketplace.exception.CategoryNotFoundException;
 import com.andersen.marketplace.exception.ProductNotFoundException;
 import com.andersen.marketplace.mapper.ProductMapperImpl;
 import com.andersen.marketplace.repository.CategoryRepository;
@@ -152,7 +152,7 @@ class ProductServiceTest {
 
         when(categoryRepository.findByName(TEST_CATEGORY_NAME)).thenReturn(null);
 
-        assertThrows(CategoryBadRequestException.class, () -> productService.addProduct(newProduct, file));
+        assertThrows(CategoryNotFoundException.class, () -> productService.addProduct(newProduct, file));
     }
 
     @Test
@@ -161,7 +161,7 @@ class ProductServiceTest {
         ProductDto expectedProduct = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, TEST_CATEGORY_NAME);
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
 
-        ProductDto actualProduct = productService.getProduct(TEST_PRODUCT_ID);
+        ProductDto actualProduct = productService.getProductDto(TEST_PRODUCT_ID);
 
         assertEquals(expectedProduct, actualProduct);
         verify(cache).put(TEST_PRODUCT_ID, product);
@@ -171,7 +171,7 @@ class ProductServiceTest {
     void shouldThrowWhenProductNotFoundById() {
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.empty());
 
-        assertThrows(ProductNotFoundException.class, () -> productService.getProduct(TEST_PRODUCT_ID));
+        assertThrows(ProductNotFoundException.class, () -> productService.getProductDto(TEST_PRODUCT_ID));
     }
 
     @Test

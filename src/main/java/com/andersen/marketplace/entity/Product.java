@@ -23,6 +23,13 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    public Product(UUID id, String name, String logo, Category category) {
+        this.id = id;
+        this.name = name;
+        this.logo = logo;
+        this.category = category;
+    }
+
     public Product(String name, String logo, Category category) {
         this.name = name;
         this.logo = logo;

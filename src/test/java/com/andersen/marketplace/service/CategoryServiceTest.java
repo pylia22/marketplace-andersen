@@ -7,6 +7,7 @@ import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
 import com.andersen.marketplace.exception.CategoryNotFoundException;
+import com.andersen.marketplace.exception.DuplicatedCategoryException;
 import com.andersen.marketplace.mapper.CategoryMapperImpl;
 import com.andersen.marketplace.mapper.ProductMapperImpl;
 import com.andersen.marketplace.repository.CategoryRepository;
@@ -28,11 +29,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.andersen.marketplace.utils.TestUtils.TEST_CATEGORY_ID;
-import static com.andersen.marketplace.utils.TestUtils.TEST_CATEGORY_NAME;
-import static com.andersen.marketplace.utils.TestUtils.TEST_LOGO;
-import static com.andersen.marketplace.utils.TestUtils.TEST_LOGO_KEY;
-import static com.andersen.marketplace.utils.TestUtils.TEST_PRODUCT_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_CATEGORY_ID;
+import static com.andersen.marketplace.utils.TestConstants.TEST_CATEGORY_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_LOGO;
+import static com.andersen.marketplace.utils.TestConstants.TEST_LOGO_KEY;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_ID;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,11 +73,11 @@ class CategoryServiceTest {
     void shouldReturnCategoriesWithProductsWhenCategoriesExist() {
         Pageable pageable = PageRequest.of(0, 5);
         Category category = getCategory();
-        Product product = new Product(TEST_PRODUCT_NAME, TEST_LOGO, category);
+        Product product = new Product(TEST_PRODUCT_ID, TEST_PRODUCT_NAME, TEST_LOGO, category);
         category.setProducts(List.of(product));
         Page<Category> page = new PageImpl<>(List.of(category));
 
-        ProductDto productDto = new ProductDto(product.getName(), product.getLogo(), category.getName());
+        ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getLogo(), category.getName());
         CategoryProductsDto expected = new CategoryProductsDto(category.getName(), category.getLogo(), List.of(productDto));
 
         when(categoryRepository.findAllWithProducts(pageable)).thenReturn(page);
@@ -104,7 +106,7 @@ class CategoryServiceTest {
 
         when(categoryRepository.findByName(TEST_CATEGORY_NAME)).thenReturn(new Category());
 
-        assertThrows(CategoryNotFoundException.class, () -> categoryService.addCategory(categoryDto, file));
+        assertThrows(DuplicatedCategoryException.class, () -> categoryService.addCategory(categoryDto, file));
     }
 
     @Test

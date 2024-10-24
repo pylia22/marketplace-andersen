@@ -26,11 +26,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.andersen.marketplace.utils.TestUtils.TEST_CATEGORY_ID;
-import static com.andersen.marketplace.utils.TestUtils.TEST_CATEGORY_NAME;
-import static com.andersen.marketplace.utils.TestUtils.TEST_LOGO;
-import static com.andersen.marketplace.utils.TestUtils.TEST_PRODUCT_ID;
-import static com.andersen.marketplace.utils.TestUtils.TEST_PRODUCT_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_CATEGORY_ID;
+import static com.andersen.marketplace.utils.TestConstants.TEST_CATEGORY_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_LOGO;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_ID;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;

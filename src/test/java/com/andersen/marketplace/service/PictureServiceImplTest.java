@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static com.andersen.marketplace.utils.TestUtils.TEST_LOGO_KEY;
+import static com.andersen.marketplace.utils.TestConstants.TEST_LOGO_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

@@ -2,7 +2,7 @@ package com.andersen.marketplace.utils;
 
 import java.util.UUID;
 
-public class TestUtils {
+public class TestConstants {
 
     public static final UUID TEST_CATEGORY_ID = UUID.fromString("149ca028-fcc0-46d6-83a2-5dc0e3e92fd9");
     public static final UUID TEST_PRODUCT_ID = UUID.fromString("6af7889e-d72b-4778-8fad-7429a5e253d4");

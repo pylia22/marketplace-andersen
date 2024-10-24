@@ -7,6 +7,7 @@ import com.andersen.marketplace.repository.CategoryRepository;
 import com.andersen.marketplace.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,10 +18,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.util.UUID;
 
@@ -28,7 +26,9 @@ import java.util.UUID;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc(addFilters = false)
 @Testcontainers
-public class IntegrationTestConfig {
+public abstract class IntegrationTestConfig {
+
+    private static final CustomPostgresqlContainer pgContainer = CustomPostgresqlContainer.getInstance();
 
     @Autowired
     protected MockMvc mockMvc;
@@ -40,13 +40,7 @@ public class IntegrationTestConfig {
     private ProductRepository productRepository;
 
     @Autowired
-    private CategoryRepository productCategoryRepository;
-
-    @Autowired
-    private GenericCache<UUID, Product> cache;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -54,24 +48,16 @@ public class IntegrationTestConfig {
     @MockBean
     private AmazonS3 amazonS3;
 
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15.1"));
-
-    static {
-        postgres.start();
-    }
-
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.url", pgContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", pgContainer::getUsername);
+        registry.add("spring.datasource.password", pgContainer::getPassword);
     }
 
     @AfterEach
-    public void afterEach() throws Exception {
+    public void afterEach() {
         productRepository.deleteAll();
         categoryRepository.deleteAll();
-        cache.clear();
     }
 }

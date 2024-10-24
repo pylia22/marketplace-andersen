@@ -17,6 +17,15 @@ public class ProductDto {
         this.category = category;
     }
 
+    public ProductDto(String name, String logo, String category) {
+        this.name = name;
+        this.logo = logo;
+        this.category = category;
+    }
+
+    public ProductDto() {
+    }
+
     public UUID getId() {
         return id;
     }

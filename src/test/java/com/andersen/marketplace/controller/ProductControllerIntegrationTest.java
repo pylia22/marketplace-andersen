@@ -1,20 +1,26 @@
 package com.andersen.marketplace.controller;
 
+import com.andersen.marketplace.cache.GenericCache;
 import com.andersen.marketplace.config.IntegrationTestConfig;
 import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.dto.ProductSearchRequest;
+import com.andersen.marketplace.entity.Product;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Set;
+import java.util.UUID;
 
-import static com.andersen.marketplace.utils.TestUtils.TEST_CATEGORY_NAME;
-import static com.andersen.marketplace.utils.TestUtils.TEST_LOGO;
-import static com.andersen.marketplace.utils.TestUtils.TEST_PRODUCT_ID;
-import static com.andersen.marketplace.utils.TestUtils.TEST_PRODUCT_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_CATEGORY_NAME;
+import static com.andersen.marketplace.utils.TestConstants.TEST_LOGO;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_ID;
+import static com.andersen.marketplace.utils.TestConstants.TEST_PRODUCT_NAME;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,11 +31,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ProductControllerIntegrationTest extends IntegrationTestConfig {
 
+    @Qualifier("productCache")
+    @Autowired
+    private GenericCache<UUID, Product> cache;
+
+    @AfterEach
+    public void tearDown() {
+        cache.clear();
+    }
+
     @Test
     @Sql("/sql/add-category.sql")
     void shouldReturnProductWhenProductWasAdded() throws Exception {
         MockPart file = new MockPart("file", "fileName", "fileContent".getBytes());
-        ProductDto productDto = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, TEST_CATEGORY_NAME);
+        ProductDto productDto = new ProductDto(TEST_PRODUCT_ID, TEST_PRODUCT_NAME, TEST_LOGO, TEST_CATEGORY_NAME);
         MockPart contentPart = new MockPart("content", objectMapper.writeValueAsString(productDto).getBytes());
         contentPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
@@ -75,7 +90,7 @@ public class ProductControllerIntegrationTest extends IntegrationTestConfig {
     @Sql("/sql/add-products.sql")
     void shouldEditProductWhenProductPresentById() throws Exception {
         String newProductName = "new product name";
-        ProductDto productDto = new ProductDto(newProductName, TEST_LOGO, TEST_CATEGORY_NAME);
+        ProductDto productDto = new ProductDto(TEST_PRODUCT_ID, newProductName, TEST_LOGO, TEST_CATEGORY_NAME);
         MockPart contentPart = new MockPart("content", objectMapper.writeValueAsString(productDto).getBytes());
         contentPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 

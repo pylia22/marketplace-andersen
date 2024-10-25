@@ -5,13 +5,13 @@ import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
 import com.andersen.marketplace.repository.CategoryRepository;
 import com.andersen.marketplace.repository.ProductRepository;
-import org.springframework.boot.CommandLineRunner;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
-public class DataLoader implements CommandLineRunner {
+public class DataLoader {
 
     private final GenericCache<UUID, Product> productCache;
     private final GenericCache<UUID, Category> categoryCache;
@@ -26,8 +26,8 @@ public class DataLoader implements CommandLineRunner {
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
-    public void run(String... args) {
+    @PostConstruct
+    public void loadData() {
         loadProductsFromDataSource();
         loadCategoriesFromDataSource();
     }

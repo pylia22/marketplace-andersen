@@ -47,7 +47,8 @@ public class ProductService {
     public Page<ProductDto> getProducts(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        return productRepository.findAll(pageRequest).map(productMapper::mapToProductDto);
+        return productRepository.findAll(pageRequest)
+                .map(product -> productMapper.mapToProductDto(product, pictureService.getPictureUrl(product.getLogo())));
     }
 
     public Set<String> getUniqueProducts() {
@@ -58,11 +59,11 @@ public class ProductService {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         return productRepository.findAllWithFilter(search.getProductCategory(), search.getProductName(), pageRequest)
-                .map(productMapper::mapToProductDto);
+                .map(product -> productMapper.mapToProductDto(product, pictureService.getPictureUrl(product.getLogo())));
     }
 
     public ProductDto editProduct(UUID id, ProductDto updatedProduct, MultipartFile logo) {
-        Product product = getProduct(id);
+        Product product = getProductById(id);
         updateProductLogo(updatedProduct, logo, product.getLogo());
         productMapper.updateProductFromDto(product, updatedProduct);
 
@@ -101,7 +102,7 @@ public class ProductService {
     }
 
     public String deleteProduct(UUID id) {
-        Product product = getProduct(id);
+        Product product = getProductById(id);
 
         pictureService.deleteFileFromS3(product.getLogo());
         productRepository.delete(product);
@@ -111,13 +112,13 @@ public class ProductService {
     }
 
     public ProductDto getProductDto(UUID id) {
-        Product product = getProduct(id);
+        Product product = getProductById(id);
         this.cache.put(id, product);
 
-        return productMapper.mapToProductDto(product);
+        return productMapper.mapToProductDto(product, pictureService.getPictureUrl(product.getLogo()));
     }
 
-    private Product getProduct(UUID id) {
+    private Product getProductById(UUID id) {
         return cache.get(id).orElseGet(() -> getProductFromRepository(id));
     }
 

@@ -63,7 +63,7 @@ class ProductServiceTest {
     @Test
     void shouldReturnProductPageWhenProductsExist() {
         Pageable pageable = PageRequest.of(0, 5);
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto productDto = new ProductDto(product.getName(), product.getLogo(), product.getCategory().getName());
         List<ProductDto> expectedProducts = List.of(productDto);
 
@@ -87,7 +87,7 @@ class ProductServiceTest {
     void shouldReturnProductPageWhenFilterApplied() {
         ProductSearchRequest search = new ProductSearchRequest(TEST_CATEGORY_NAME, TEST_PRODUCT_NAME);
         Pageable pageable = PageRequest.of(0, 5);
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto productDto = new ProductDto(product.getName(), product.getLogo(), product.getCategory().getName());
         List<ProductDto> expectedProducts = List.of(productDto);
 
@@ -101,7 +101,7 @@ class ProductServiceTest {
 
     @Test
     void shouldEditProductWhenProductExists() {
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto updatedProduct = new ProductDto("updatedProductName", null, product.getCategory().getName());
 
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
@@ -115,7 +115,7 @@ class ProductServiceTest {
 
     @Test
     void shouldDeleteOldProductLogoWhenNewLogoUploaded() {
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto updatedProduct = new ProductDto("updatedProductName", TEST_LOGO, product.getCategory().getName());
 
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
@@ -130,8 +130,8 @@ class ProductServiceTest {
 
     @Test
     void shouldVerifySavedProductCached() {
-        Product product = getProduct();
-        Product savedProduct = getProduct();
+        Product product = getProductById();
+        Product savedProduct = getProductById();
         savedProduct.setId(TEST_PRODUCT_ID);
         Category category = product.getCategory();
         ProductDto newProduct = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, category.getName());
@@ -147,7 +147,7 @@ class ProductServiceTest {
 
     @Test
     void shouldThrowWhenCategoryNotFound() {
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto newProduct = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, product.getCategory().getName());
 
         when(categoryRepository.findByName(TEST_CATEGORY_NAME)).thenReturn(null);
@@ -157,7 +157,7 @@ class ProductServiceTest {
 
     @Test
     void shouldReturnProductWhenProductFoundById() {
-        Product product = getProduct();
+        Product product = getProductById();
         ProductDto expectedProduct = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, TEST_CATEGORY_NAME);
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
 
@@ -176,7 +176,7 @@ class ProductServiceTest {
 
     @Test
     void shouldVerifyProductDeletedById() {
-        Product product = getProduct();
+        Product product = getProductById();
 
         when(cache.get(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
 
@@ -187,7 +187,7 @@ class ProductServiceTest {
         verify(cache).remove(TEST_PRODUCT_ID);
     }
 
-    private Product getProduct() {
+    private Product getProductById() {
         Product product = new Product(TEST_PRODUCT_NAME, TEST_LOGO);
         Category category = new Category(TEST_CATEGORY_ID, TEST_CATEGORY_NAME, TEST_LOGO, List.of(product));
         product.setCategory(category);

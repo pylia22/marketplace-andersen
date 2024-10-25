@@ -1,6 +1,8 @@
 package com.andersen.marketplace.service;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.andersen.marketplace.properties.S3BucketProperties;
 import org.slf4j.Logger;
@@ -61,5 +63,25 @@ public class PictureServiceImpl implements PictureService {
         if (keys != null && !keys.isEmpty()) {
             keys.forEach(this::deleteFileFromS3);
         }
+    }
+
+    @Override
+    public String getPictureUrl(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null");
+        }
+        if (checkIfPictureUploaded(key)) {
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(
+                    s3BucketProperties.getBucketName(), key)
+                    .withMethod(HttpMethod.GET);
+            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        } else {
+            logger.warn("Picture key {} doesn't exist in bucket {}", key, s3BucketProperties.getBucketName());
+            return null;
+        }
+    }
+
+    private boolean checkIfPictureUploaded(String key) {
+        return amazonS3.doesObjectExist(s3BucketProperties.getBucketName(), key);
     }
 }

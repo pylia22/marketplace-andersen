@@ -72,7 +72,7 @@ class CategoryServiceTest {
     @Test
     void shouldReturnCategoriesWithProductsWhenCategoriesExist() {
         Pageable pageable = PageRequest.of(0, 5);
-        Category category = getCategory();
+        Category category = getCategoryById();
         Product product = new Product(TEST_PRODUCT_ID, TEST_PRODUCT_NAME, TEST_LOGO, category);
         category.setProducts(List.of(product));
         Page<Category> page = new PageImpl<>(List.of(category));
@@ -89,7 +89,7 @@ class CategoryServiceTest {
 
     @Test
     void shouldSaveCategoryWhenCategoryNotFoundByName() {
-        Category savedCategory = getCategory();
+        Category savedCategory = getCategoryById();
 
         when(categoryRepository.findByName(TEST_CATEGORY_NAME)).thenReturn(null);
         when(pictureService.uploadAndGetKey(any(MultipartFile.class))).thenReturn(TEST_LOGO_KEY);
@@ -111,7 +111,7 @@ class CategoryServiceTest {
 
     @Test
     void shouldVerifyCategoryByIdWithRelatedLogosDeleted() {
-        Category category = getCategory();
+        Category category = getCategoryById();
         Product product = new Product(TEST_PRODUCT_NAME, TEST_LOGO, category);
         category.setProducts(List.of(product));
 
@@ -129,12 +129,12 @@ class CategoryServiceTest {
 
     @Test
     void shouldReturnCategoryWithProductsWhenCategoryFoundById() {
-        Category category = getCategory();
+        Category category = getCategoryById();
         CategoryProductsDto expectedCategoryProductsDto = new CategoryProductsDto(category.getName(), category.getLogo(), null);
 
         when(categoryRepository.findByIdWithProducts(TEST_CATEGORY_ID)).thenReturn(Optional.of(category));
 
-        CategoryProductsDto actualCategoryProductsDto = categoryService.getCategory(TEST_CATEGORY_ID);
+        CategoryProductsDto actualCategoryProductsDto = categoryService.getCategoryById(TEST_CATEGORY_ID);
 
         assertEquals(expectedCategoryProductsDto, actualCategoryProductsDto);
         verify(cache).put(TEST_CATEGORY_ID, category);
@@ -144,10 +144,10 @@ class CategoryServiceTest {
     void shouldThrowWhenCategoryNotFoundById() {
         when(categoryRepository.findByIdWithProducts(TEST_CATEGORY_ID)).thenReturn(Optional.empty());
 
-        assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(TEST_CATEGORY_ID));
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategoryById(TEST_CATEGORY_ID));
     }
 
-    private Category getCategory() {
+    private Category getCategoryById() {
         return new Category(TEST_CATEGORY_ID, TEST_CATEGORY_NAME, TEST_LOGO, null);
     }
 }

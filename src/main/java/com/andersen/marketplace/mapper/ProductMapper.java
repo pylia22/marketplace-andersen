@@ -16,9 +16,12 @@ public interface ProductMapper {
     @Mapping(target = "category", source = "product.category.name")
     ProductDto mapToProductDto(Product product);
 
-    List<ProductDto> mapToProductDtoList(List<Product> products);
-
     @Mapping(target = "category", ignore = true)
     void updateProductFromDto(@MappingTarget Product product, ProductDto updatedProduct);
 
+    @Mapping(target = "id", source = "product.id")
+    @Mapping(target = "name", source = "product.name")
+    @Mapping(target = "category", source = "product.category.name")
+    @Mapping(target = "logo", source = "logoUrl")
+    ProductDto mapToProductDto(Product product, String logoUrl);
 }

@@ -11,4 +11,6 @@ public interface PictureService {
     void deleteFileFromS3(String key);
 
     void deleteFilesFromS3(List<String> keys);
+
+    String getPictureUrl(String key);
 }

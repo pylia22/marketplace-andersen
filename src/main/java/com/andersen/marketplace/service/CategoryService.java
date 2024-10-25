@@ -3,6 +3,7 @@ package com.andersen.marketplace.service;
 import com.andersen.marketplace.cache.GenericCache;
 import com.andersen.marketplace.dto.CategoryDto;
 import com.andersen.marketplace.dto.CategoryProductsDto;
+import com.andersen.marketplace.dto.ProductDto;
 import com.andersen.marketplace.entity.Category;
 import com.andersen.marketplace.entity.Product;
 import com.andersen.marketplace.exception.CategoryNotFoundException;
@@ -47,8 +48,23 @@ public class CategoryService {
     public Page<CategoryProductsDto> getCategories(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        return categoryRepository.findAllWithProducts(pageRequest).map(category ->
-                categoryMapper.mapToCategoryProductsDto(category, productMapper.mapToProductDtoList(category.getProducts())));
+        return categoryRepository.findAllWithProducts(pageRequest)
+                .map(category ->
+                        categoryMapper.mapToCategoryProductsDto(category,
+                                pictureService.getPictureUrl(category.getLogo()), getRelatedProductDtoList(category)));
+    }
+
+    private List<ProductDto> getRelatedProductDtoList(Category category) {
+        return category.getProducts().stream()
+                .map(product -> productMapper.mapToProductDto(product, pictureService.getPictureUrl(product.getLogo())))
+                .toList();
+    }
+
+    public CategoryProductsDto getCategoryById(UUID id) {
+        Category category = this.cache.get(id).orElseGet(() -> getCategoryFromRepository(id));
+        String logoUrl = pictureService.getPictureUrl(category.getLogo());
+
+        return categoryMapper.mapToCategoryProductsDto(category, logoUrl, getRelatedProductDtoList(category));
     }
 
     public CategoryDto addCategory(CategoryDto newCategory, MultipartFile logo) {
@@ -67,6 +83,7 @@ public class CategoryService {
         String categoryLogoKey = pictureService.uploadAndGetKey(logo);
         newCategory.setLogo(categoryLogoKey);
         categoryMapper.mapCategoryDtoToCategory(category, newCategory);
+
         return category;
     }
 
@@ -91,12 +108,6 @@ public class CategoryService {
         List<String> logoUrls = category.getProducts().stream().map(Product::getLogo).toList();
         pictureService.deleteFilesFromS3(logoUrls);
         pictureService.deleteFileFromS3(category.getLogo());
-    }
-
-    public CategoryProductsDto getCategory(UUID id) {
-        Category category = this.cache.get(id).orElseGet(() -> getCategoryFromRepository(id));
-
-        return categoryMapper.mapToCategoryProductsDto(category, productMapper.mapToProductDtoList(category.getProducts()));
     }
 
     public Category getCategoryFromRepository(UUID id) {

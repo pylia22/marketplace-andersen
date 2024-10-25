@@ -2,12 +2,21 @@ package com.andersen.marketplace.dto;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class CategoryProductsDto {
 
+    private UUID id;
     private String name;
     private String logo;
     private List<ProductDto> products;
+
+    public CategoryProductsDto(UUID id, String name, String logo, List<ProductDto> products) {
+        this.id = id;
+        this.name = name;
+        this.logo = logo;
+        this.products = products;
+    }
 
     public CategoryProductsDto(String name, String logo, List<ProductDto> products) {
         this.name = name;
@@ -16,6 +25,14 @@ public class CategoryProductsDto {
     }
 
     public CategoryProductsDto() {
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -47,13 +64,14 @@ public class CategoryProductsDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CategoryProductsDto that = (CategoryProductsDto) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
                 Objects.equals(logo, that.logo) &&
                 Objects.equals(products, that.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, logo, products);
+        return Objects.hash(id, name, logo, products);
     }
 }

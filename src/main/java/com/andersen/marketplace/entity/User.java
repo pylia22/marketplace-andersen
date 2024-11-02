@@ -9,6 +9,9 @@ import jakarta.persistence.Table;
 
 import java.util.UUID;
 
+/**
+ * Entity class representing a user.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -22,45 +25,63 @@ public class User {
     private String password;
     private String roles;
 
+    /**
+     * Default constructor for User.
+     */
     public User() {
     }
 
-    public User(UUID id, String name, String password, String roles) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.roles = roles;
-    }
-
+    /**
+     * Returns the user ID.
+     *
+     * @return the user ID
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * Sets the user ID.
+     *
+     * @param id the user ID
+     */
     public void setId(UUID id) {
         this.id = id;
     }
 
+    /**
+     * Returns the username.
+     *
+     * @return the username
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the username.
+     *
+     * @param name the username
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the user's password.
+     *
+     * @return the user's password
+     */
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    /**
+     * Returns the user's roles.
+     *
+     * @return the user's roles
+     */
     public String getRoles() {
         return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
     }
 }

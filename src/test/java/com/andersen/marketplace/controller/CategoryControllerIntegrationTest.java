@@ -70,7 +70,6 @@ class CategoryControllerIntegrationTest extends IntegrationTestConfig {
     @Sql("/sql/add-category.sql")
     void shouldReturnCategoryByIdWhenCategoryFound() throws Exception {
         mockMvc.perform(get("/api/categories/" + TEST_CATEGORY_ID))
-                .andExpect(jsonPath("$.name").value(TEST_CATEGORY_NAME))
-                .andExpect(jsonPath("$.logo").value("logo.png"));
+                .andExpect(jsonPath("$.name").value(TEST_CATEGORY_NAME));
     }
 }

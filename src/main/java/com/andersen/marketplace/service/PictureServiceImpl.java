@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service implementation for managing pictures in Amazon S3.
+ */
 @Service
 public class PictureServiceImpl implements PictureService {
 
@@ -24,11 +27,25 @@ public class PictureServiceImpl implements PictureService {
     private final AmazonS3 amazonS3;
     private final S3BucketProperties s3BucketProperties;
 
+    /**
+     * Constructs a new PictureServiceImpl.
+     *
+     * @param amazonS3 the Amazon S3 client
+     * @param s3BucketProperties the S3 bucket properties
+     */
     public PictureServiceImpl(AmazonS3 amazonS3, S3BucketProperties s3BucketProperties) {
         this.amazonS3 = amazonS3;
         this.s3BucketProperties = s3BucketProperties;
     }
 
+    /**
+     * Uploads a file to S3 and returns the file key.
+     *
+     * @param file the file to upload
+     * @return the file key
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws RuntimeException if the file upload fails
+     */
     @Override
     public String uploadAndGetKey(MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -49,6 +66,11 @@ public class PictureServiceImpl implements PictureService {
         return newFileKey;
     }
 
+    /**
+     * Deletes a file from S3 by its key.
+     *
+     * @param key the file key
+     */
     @Override
     public void deleteFileFromS3(String key) {
         if (key != null) {
@@ -58,6 +80,11 @@ public class PictureServiceImpl implements PictureService {
         }
     }
 
+    /**
+     * Deletes multiple files from S3 by their keys.
+     *
+     * @param keys the list of file keys
+     */
     @Override
     public void deleteFilesFromS3(List<String> keys) {
         if (keys != null && !keys.isEmpty()) {
@@ -65,6 +92,13 @@ public class PictureServiceImpl implements PictureService {
         }
     }
 
+    /**
+     * Retrieves the URL of a picture by its key.
+     *
+     * @param key the file key
+     * @return the URL of the picture
+     * @throws IllegalArgumentException if the key is null
+     */
     @Override
     public String getPictureUrl(String key) {
         if (key == null) {
@@ -81,6 +115,12 @@ public class PictureServiceImpl implements PictureService {
         }
     }
 
+    /**
+     * Checks if a picture is uploaded in S3 by its key.
+     *
+     * @param key the file key
+     * @return true if the picture exists, false otherwise
+     */
     private boolean checkIfPictureUploaded(String key) {
         return amazonS3.doesObjectExist(s3BucketProperties.getBucketName(), key);
     }

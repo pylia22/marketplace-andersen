@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -78,9 +79,10 @@ class CategoryServiceTest {
         Page<Category> page = new PageImpl<>(List.of(category));
 
         ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getLogo(), category.getName());
-        CategoryProductsDto expected = new CategoryProductsDto(category.getName(), category.getLogo(), List.of(productDto));
+        CategoryProductsDto expected = new CategoryProductsDto(category.getId(), category.getName(), category.getLogo(), List.of(productDto));
 
         when(categoryRepository.findAllWithProducts(pageable)).thenReturn(page);
+        when(pictureService.getPictureUrl(category.getLogo())).thenReturn(TEST_LOGO);
 
         Page<CategoryProductsDto> actual = categoryService.getCategories(0, 5);
 
@@ -130,9 +132,11 @@ class CategoryServiceTest {
     @Test
     void shouldReturnCategoryWithProductsWhenCategoryFoundById() {
         Category category = getCategoryById();
-        CategoryProductsDto expectedCategoryProductsDto = new CategoryProductsDto(category.getName(), category.getLogo(), null);
+        CategoryProductsDto expectedCategoryProductsDto = new CategoryProductsDto(
+                category.getId(), category.getName(), category.getLogo(), Collections.emptyList());
 
         when(categoryRepository.findByIdWithProducts(TEST_CATEGORY_ID)).thenReturn(Optional.of(category));
+        when(pictureService.getPictureUrl(category.getLogo())).thenReturn(TEST_LOGO);
 
         CategoryProductsDto actualCategoryProductsDto = categoryService.getCategoryById(TEST_CATEGORY_ID);
 
@@ -148,6 +152,6 @@ class CategoryServiceTest {
     }
 
     private Category getCategoryById() {
-        return new Category(TEST_CATEGORY_ID, TEST_CATEGORY_NAME, TEST_LOGO, null);
+        return new Category(TEST_CATEGORY_ID, TEST_CATEGORY_NAME, TEST_LOGO, Collections.emptyList());
     }
 }

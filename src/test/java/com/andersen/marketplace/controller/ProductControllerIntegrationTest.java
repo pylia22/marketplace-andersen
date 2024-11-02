@@ -106,6 +106,6 @@ public class ProductControllerIntegrationTest extends IntegrationTestConfig {
     void shouldReturnSuccessMessageWhenProductDeleted() throws Exception {
         mockMvc.perform(delete("/api/products/" + TEST_PRODUCT_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("product has been deleted"));
+                .andExpect(jsonPath("$").value("Product has been deleted"));
     }
 }

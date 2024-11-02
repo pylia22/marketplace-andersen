@@ -68,6 +68,7 @@ class ProductServiceTest {
         List<ProductDto> expectedProducts = List.of(productDto);
 
         when(productRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(product)));
+        when(pictureService.getPictureUrl(product.getLogo())).thenReturn(TEST_LOGO);
 
         List<ProductDto> actualProducts = productService.getProducts(0, 5).getContent();
 
@@ -93,6 +94,7 @@ class ProductServiceTest {
 
         when(productRepository.findAllWithFilter(TEST_CATEGORY_NAME, TEST_PRODUCT_NAME, pageable))
                 .thenReturn(new PageImpl<>(List.of(product)));
+        when(pictureService.getPictureUrl(product.getLogo())).thenReturn(TEST_LOGO);
 
         List<ProductDto> actualProducts = productService.getFilteredProducts(search, 0, 5).getContent();
 
@@ -159,7 +161,9 @@ class ProductServiceTest {
     void shouldReturnProductWhenProductFoundById() {
         Product product = getProductById();
         ProductDto expectedProduct = new ProductDto(TEST_PRODUCT_NAME, TEST_LOGO, TEST_CATEGORY_NAME);
+
         when(productRepository.findById(TEST_PRODUCT_ID)).thenReturn(Optional.of(product));
+        when(pictureService.getPictureUrl(product.getLogo())).thenReturn(TEST_LOGO);
 
         ProductDto actualProduct = productService.getProductDto(TEST_PRODUCT_ID);
 

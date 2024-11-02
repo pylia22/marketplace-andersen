@@ -5,6 +5,7 @@ import com.andersen.marketplace.cache.GenericCache;
 import com.andersen.marketplace.entity.Product;
 import com.andersen.marketplace.repository.CategoryRepository;
 import com.andersen.marketplace.repository.ProductRepository;
+import com.andersen.marketplace.service.PictureService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

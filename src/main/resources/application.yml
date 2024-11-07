@@ -15,6 +15,6 @@ server:
 
 s3:
   region: eu-north-1
-  accessKey: AKIA4VDBMGFNGIKJ4APW
-  secretKey: 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
+  accessKey: ${accessKeyPlaceHolder}
+  secretKey: ${secretKeyPlaceHolder}
   bucketName: andersen-marketplace

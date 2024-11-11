@@ -10,11 +10,6 @@ spring:
     enabled: true
     validate-on-migrate: true
 
-server:
-  port: 8081
+#server:
+#  port: 8080
 
-s3:
-  region: eu-north-1
-  accessKey: ${accessKeyPlaceHolder}
-  secretKey: ${secretKeyPlaceHolder}
-  bucketName: andersen-marketplace

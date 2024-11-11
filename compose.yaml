@@ -8,3 +8,24 @@ services:
     ports:
       - target: 5432
         published: 5488
+
+  spring-app:
+    image: docker-spring-boot-postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: marketplace
+    ports:
+      - target: 8080
+        published: 8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/marketplace
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    # - S3_REGION=
+    # - S3_ACCESS_KEY=
+    # - S3_SECRET_KEY
+    # - S3_BUCKET_NAME=
+    depends_on:
+      - postgres

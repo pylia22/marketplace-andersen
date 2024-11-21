@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ ProductNotFoundException.class, CategoryNotFoundException.class})
-    public ResponseEntity<?> handleAllAccessDeniedExceptions(ProductNotFoundException ex) {
+    public ResponseEntity<?> handleAllNotFoundExceptions(ProductNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

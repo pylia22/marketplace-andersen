@@ -1,7 +1,6 @@
 package com.andersen.marketplace.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 public class DuplicatedCategoryException extends ResponseStatusException {
